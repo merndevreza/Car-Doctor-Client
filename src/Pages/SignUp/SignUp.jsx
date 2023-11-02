@@ -1,11 +1,29 @@
+import { useContext } from "react";
+import { AuthContext } from "../../Authentication/AuthProvider";
+import { updateProfile } from "firebase/auth";
+
 const SignUp = () => {
+  const { signUp } = useContext(AuthContext);
+  
   const handleSignUp = (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
     const email = form.email.value;
     const password = form.password.value;
-    console.log(name, email, password);
+
+    signUp(email, password)
+      .then((data) => {
+        const user = data.user;
+        updateProfile(user, {
+          displayName: name,
+        })
+          .then()
+          .catch((error) => console.log(error.message));
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -64,10 +82,6 @@ const SignUp = () => {
               />
             </div>
           </form>
-          <h2 className="text-center mb-4">or Sign Up with</h2>
-          <button>Google</button>
-          <button>Facebook</button>
-          <button>Github</button>
         </div>
       </div>
     </div>
